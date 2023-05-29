@@ -13,18 +13,18 @@ int main ()
   GC g;
   int width, height;
   XPoint center;
+  unsigned char R_val, G_val, B_val;
+  XColor xc, sc;
+  char color_str[100];
 
 
   /* open the display (connect to the X server)
    * setup default screen and the dimensions
    */
   dpy = XOpenDisplay (getenv ("DISPLAY"));
-  snum = DefaultScreen(dpy);
 
   center.x = width/2, center.y = height/2;
 
-  printf("Default screen num: %d\n", snum);
-  printf("Dimensions: %d x %d\n", width, height);
 
   /* get the root window */
   root = DefaultRootWindow (dpy);
@@ -35,12 +35,12 @@ int main ()
   /* set screen dimensions */
   width = wa.width;
   height = wa.height;
+  printf("Dimensions: %d x %d\n", width, height);
 
   /* create a GC for drawing in the window */
   g = XCreateGC (dpy, root, 0, NULL);
 
-  /* set foreground color */
-  XSetForeground (dpy, g, WhitePixelOfScreen(DefaultScreenOfDisplay(dpy)) );
+
 
   /* draw something */
   while (1)
@@ -56,11 +56,21 @@ int main ()
       points[i].y += center.y;
     }
 
+    /* clean str buf */
+    memset(color_str, sizeof(color_str), 0);
+
+    /* assign rgb val randomly */
+    R_val = random(), G_val = random(), B_val = random();
+
+    /* set color */
+    XAllocNamedColor(dpy, DefaultColormapOfScreen(DefaultScreenOfDisplay(dpy)), "RGBi:100.0/0.0/0.0", &reds, &redx);
+    XSetForeground (dpy, g, sc.pixel );
+
     /* draw a little square */
-    // XFillRectangle (dpy, root, g, random()%width, random()%height, 10, 10);
+    XFillRectangle (dpy, root, g, random()%width, random()%height, 10, 10);
 
     /* draw a polygon */
-    XFillPolygon (dpy, root, g, points, 4, Convex, CoordModeOrigin);
+    // XFillPolygon (dpy, root, g, points, 4, Convex, CoordModeOrigin);
 
     /* draw a point */
     // XDrawPoint(dpy, root, g, random()%width, random()%height);
